@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Women's Day Face Catch Game</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9cee, #d07cff);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: clamp(15px, 3vw, 25px);
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            width: clamp(300px, 95vw, 1200px);
+            height: clamp(400px, 90vh, 800px);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+        h1 {
+            color: #9b1d64;
+            font-size: clamp(1.5em, 4.5vw, 2.8em);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 2px 2px 8px rgba(155, 29, 100, 0.3);
+        }
+        p {
+            color: #333;
+            font-size: clamp(0.8em, 2.2vw, 1em);
+            line-height: 1.6;
+            margin: clamp(5px, 1vw, 10px) 0;
+            font-weight: 500;
+        }
+        #score {
+            font-size: clamp(1em, 3vw, 1.5em);
+            color: #ff69b4;
+            font-weight: bold;
+            margin: clamp(8px, 2vw, 15px) 0;
+            transition: color 0.3s ease;
+        }
+        .start-btn {
+            background: linear-gradient(45deg, #ff69b4, #ff9cee);
+            color: white;
+            border: none;
+            padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 35px);
+            border-radius: 50px;
+            font-size: clamp(0.9em, 2.2vw, 1.2em);
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 105, 180, 0.5);
+            margin: clamp(8px, 2vw, 15px) 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(155, 29, 100, 0.7);
+        }
+        .start-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .game-item {
+            position: absolute;
+            width: clamp(35px, 7vw, 70px);
+            height: clamp(35px, 7vw, 70px);
+            cursor: pointer;
+            animation: fall 6s linear forwards;
+            user-select: none;
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(255, 105, 180, 0.8);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .popup, .wish-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.98);
+            padding: clamp(15px, 3vw, 25px);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            width: clamp(250px, 80vw, 400px);
+            z-index: 1000;
+            animation: popupFadeIn 0.5s ease-in-out;
+        }
+        .popup h2, .wish-popup h2 {
+            color: #9b1d64;
+            font-size: clamp(1.3em, 3.5vw, 1.8em);
+            margin: 0 0 clamp(8px, 2vw, 15px);
+        }
+        .popup p, .wish-popup p {
+            color: #333;
+            font-size: clamp(0.9em, 2.5vw, 1.1em);
+            margin: 0 0 clamp(10px, 2.5vw, 20px);
+        }
+        .popup button, .wish-popup button {
+            background: linear-gradient(45deg, #ff69b4, #ff9cee);
+            color: white;
+            border: none;
+            padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 25px);
+            border-radius: 50px;
+            font-size: clamp(0.8em, 2vw, 1em);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .popup button:hover, .wish-popup button:hover {
+            transform: scale(1.05);
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            animation: overlayFadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(calc(90vh + 50px)); opacity: 0.4; }
+        }
+        @keyframes sparkle {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.6); }
+            100% { opacity: 0; transform: scale(2.2); }
+        }
+        @keyframes popupFadeIn {
+            from { opacity: 0; transform: translate(-50%, -45%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        @keyframes overlayFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 600px) {
+            .game-container {
+                height: clamp(350px, 85vh, 600px);
+                padding: clamp(10px, 2vw, 15px);
+            }
+            .game-item {
+                animation-duration: 5s;
+            }
+            .popup, .wish-popup {
+                width: clamp(220px, 90vw, 350px);
+                padding: clamp(10px, 2vw, 15px);
+            }
+        }
+        @media (max-width: 400px) {
+            h1 {
+                letter-spacing: 1px;
+            }
+            .start-btn {
+                width: clamp(150px, 80%, 200px);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div>
+            <h1>Women's Day Face Catch!</h1>
+            <p>Celebrate March 8th, 2025—catch the faces!</p>
+        </div>
+        <p id="score">Score: 0</p>
+        <button class="start-btn" onclick="showWish()">Play Now!</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <h2>Game Over!</h2>
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <div class="wish-popup" id="wishPopup">
+        <h2>Happy Women's Day!</h2>
+        <p>May this Women's Day bring you happiness and joy alway...bong! bong!</p>
+        <br>
+        <br>
+        <p>Form: Piseth Chuon</p>
+        <button onclick="startGameFromWish()">Start Game!</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let gameActive = false;
+        const faceImage = 'face.png'; // Adjust if needed
+
+        function showWish() {
+            const wishPopup = document.getElementById('wishPopup');
+            const overlay = document.getElementById('overlay');
+            wishPopup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function startGameFromWish() {
+            const wishPopup = document.getElementById('wishPopup');
+            const overlay = document.getElementById('overlay');
+            wishPopup.style.display = 'none';
+            overlay.style.display = 'none';
+            startGame();
+        }
+
+        function startGame() {
+            if (gameActive) return;
+            gameActive = true;
+            document.querySelector('.start-btn').textContent = 'Game On!';
+            document.querySelector('.start-btn').disabled = true;
+            score = 0;
+            updateScore();
+            spawnItems();
+            setTimeout(endGame, 15000);
+        }
+
+        function spawnItems() {
+            const container = document.getElementById('gameContainer');
+            const spawnInterval = setInterval(() => {
+                if (!gameActive) {
+                    clearInterval(spawnInterval);
+                    return;
+                }
+                const item = document.createElement('img');
+                item.className = 'game-item';
+                item.src = faceImage;
+                item.style.left = Math.random() * (container.offsetWidth - clamp(35, 7 * window.innerWidth / 100, 70)) + 'px';
+                item.onclick = () => catchItem(item);
+                container.appendChild(item);
+                setTimeout(() => {
+                    if (item.parentNode) item.remove();
+                }, 6000);
+            }, 700);
+        }
+
+        function catchItem(item) {
+            if (!gameActive) return;
+            score += 10;
+            updateScore();
+            item.style.transform = 'scale(1.5)';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 200);
+            addSparkle(item.style.left, item.style.top);
+        }
+
+        function addSparkle(x, y) {
+            const container = document.getElementById('gameContainer');
+            const sparkle = document.createElement('span');
+            sparkle.innerHTML = '✨';
+            sparkle.style.position = 'absolute';
+            sparkle.style.left = x;
+            sparkle.style.top = y;
+            sparkle.style.fontSize = clamp(1.2, 3.5, 1.8) + 'em';
+            sparkle.style.color = '#ff9cee';
+            sparkle.style.animation = 'sparkle 1s ease-out forwards';
+            container.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Score: ${score}`;
+        }
+
+        function endGame() {
+            gameActive = false;
+            document.querySelector('.start-btn').textContent = 'Play Again!';
+            document.querySelector('.start-btn').disabled = false;
+            const container = document.getElementById('gameContainer');
+            const items = container.getElementsByClassName('game-item');
+            while (items.length > 0) items[0].remove();
+            showPopup();
+        }
+
+        function showPopup() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const messageElement = document.getElementById('popupMessage');
+            let message = '';
+
+            if (score <= 50) {
+                message = `Score: ${score}<br>You're just warming up! Keep catching those faces!`;
+            } else if (score <= 100) {
+                message = `Score: ${score}<br>Nice! You’re getting the hang of this face-catching fun!`;
+            } else if (score <= 150) {
+                message = `Score: ${score}<br>Amazing! You’re a face-catching pro—keep shining!`;
+            } else {
+                message = `Score: ${score}<br>EPIC! You’ve caught tons of faces like a Women’s Day legend!`;
+            }
+
+            messageElement.innerHTML = message;
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function clamp(min, preferred, max) {
+            return Math.min(Math.max(min, preferred), max);
+        }
+
+        window.onload = showWish;
+    </script>
+</body>
+</html>
